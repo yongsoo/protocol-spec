@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+        <link rel="stylesheet" href="./../css/bootstrap.min.css">
+        <style>
+            body {
+                padding-top: 50px;
+                padding-bottom: 20px;
+            }
+        </style>
+        <link rel="stylesheet" href="./../css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="./../css/main.css">
+
+        <script src="./../js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+    <!--
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Project name</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <form class="navbar-form navbar-right" role="form">
+            <div class="form-group">
+              <input type="text" placeholder="Email" class="form-control">
+            </div>
+            <div class="form-group">
+              <input type="password" placeholder="Password" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-success">Sign in</button>
+          </form>
+        </div>
+      </div>
+    </div>
+   -->
+
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+
+    <div class="container" style='margin-top:-3em'>
+      <!-- Example row of columns -->
+      <div class="row">
+        <div class="col-md-2">
+          <div id='qrCode'></div>
+        </div>
+        <div class="col-md-8">
+          <p class=''><img style='width:280px; margin-top: 20px;float:right; ' src='./../img/built_on_ripple.png'</p>
+          <h1>Bitso Gateway Protocol <i>Beta</i></h1>
+
+          <p>Send payments of Mexican Peso (MXN) to any bank account in Mexico</p>
+
+<h2>Usage</h2>
+  
+<p>1. Before sending MXN to a Mexican bank account you must verify with Bitso that they can deliver funds to that account</p>
+
+<pre>
+
+    GET https://bitso.com/.well-known/webfinger?resource=acct:(GivenName)+(FamilyName)+(CLAVE)+(BankName)@bitso.com
+
+</pre>
+
+<p>The above call will return whether not not one can make a payment to the given bank account.</p>
+
+<pre>
+
+  {
+    "aliases": [
+        "ripple:rBWay8KRdmroZra4DTXi6h5cLtPhs5mH7v?dt=7383",
+    ],
+    "links": [
+      {
+        "rel": "https://gatewayd.org/gateway-services/bridge_quotes",
+        "href": "https://bitso.com/ripple/bridge_quotes",
+      },
+      {
+        "rel": "https://gatewayd.org/gateway-services/bridge_payment_status",
+        "href": "https://bitso.com/ripple/payment_status",
+      }
+    ]
+  }
+
+</pre>
+
+<p>2. To determine whether a payment can be made to a Mexican bank account through Bitso from a specific Ripple
+account issue the following call to get a quote for a Ripple payment.</p>
+
+<pre>
+
+    GET https://bitso.com/ripple/bridge_quotes/:source/:destination/:destination_amount/:destination_currency
+
+</pre>
+
+<code>
+<pre>
+
+    {
+      bridge_quotes: [{
+        wallet_payment: {
+          "destination": "ripple:rHpR6ixWbMyGoDWskMJGD6rEg7Qq1oriDh?dt=7383"
+          "source"     : "ripple:r4EwBWxrx5HxYRyisfGzMto3AT8FZiYdWk"
+          "primary_amount": {
+            "amount": "5.125",
+            "currency": "USD",
+            "issuer": ""
+          },
+          "invoice_id": "7c220bd60487236f8ec82cd572eae0c9b79cb5178c0cba8f488c981183422908",
+          "expiration": "2014-09-23T20:20:20.000Z"
+        },
+        "destination": {
+            "uri": "acct:Jose+Valim+3883309488458438+Santander@bitso.com",
+            "claims_required": [],
+            "claims_jwts": [],
+            "additional_info": {}
+        },
+        "destination_amount": {
+            "amount": "25.78",
+            "currency": "MXN"
+        },
+        "parties": {
+           "inbound_bridge": ""
+           "outbound_bridge": "https://bitso.com",
+           "sending_agent": "",
+           "receiving_agent": ""
+        }
+      }]
+    }
+</pre>
+</code>
+
+<p>3. Sender sends the Ripple payment using the destination tag and invoice id specified</p>
+
+<p>4. Checking payment status<p>
+
+<p>
+You can check the status of a bridge payment by making a get request with the invoice id:
+</p>
+
+<pre>
+    GET https://bitso.com/ripple/bridge_payment_status/7c220bd60487236f8ec82cd572eae0c9b79cb5178c0cba8f488c981183422908
+</pre>
+
+<p>Three possible states exist for a bridge payment: "unpaid", "paid", "completed"
+
+<ul>
+  <li>unpaid    - ripple payment has not yet been sent</li>
+  <li>paid      - ripple payment has been sent, but bank transfer is still pending</li>
+  <li>completed - bank transfer to final account is completed</li>
+</ul>
+
+<pre>
+    {
+      "invoice_id": "7c220bd60487236f8ec82cd572eae0c9b79cb5178c0cba8f488c981183422908",
+      "ripple_transaction_hash": "3486254b376b9cd8f0fed3b152717ff287579e6b7a95b3ad30e9c5da66789eac"
+      "state": "paid"
+    }
+</pre>
+       </div>
+        <div class="col-md-2">
+        </div>
+      </div>
+
+      <footer>
+      </footer>
+    </div> <!-- /container -->        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.0.min.js"><\/script>')</script>
+
+        <script src="/js/vendor/bootstrap.min.js"></script>
+        <script src="/js/vendor/underscore-min.js"></script>
+        <script src="/js/vendor/backbone-min.js"></script>
+        <script src="/js/vendor/qrcode.min.js"></script>
+        <script src="/js/main.js"></script>
+
+        <script>
+          $(function() {
+        </script>
+
+        <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+        <script>
+            (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+            function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+            e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+            e.src='//www.google-analytics.com/analytics.js';
+            r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+            ga('create','UA-36236651-7');ga('send','pageview');
+        </script>
+      <script type='text/template' id='nameTemplate'>
+        <h3>~ {{= username }}</h3>
+        <h5>{{= address }}</h5>
+      </script>
+      <script type='text/template' id='balanceTemplate'>
+        <li style='margin-bottom:0.5em; border-bottom: 1px solid #ccc; list-style:none; text-decoration:none'>
+          <p><b>{{= value }}</b> <span style='float:right; text-align:right'>{{= currency }}</span></p>
+          <p>{{= counterparty }}</p>
+        </li>
+      </script>
+      <script type='text/template' id='paymentTemplate'>
+        <li style='list-style:none; text-decoration:none'>
+          <a target='_blank' href='https://ripple.com/graph/#{{= hash }}'>{{= hash }}</p>
+        </li>
+      </script>
+    </body>
+</html>
+
