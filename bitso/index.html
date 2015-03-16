@@ -106,7 +106,7 @@ account issue the following call to get a quote for a Ripple payment.</p>
 
 <pre>
 
-    GET https://bitso.com/ripple/bridge_quotes/:source/:destination/:destination_amount/:destination_currency
+    GET https://bitso.com/ripple/bridge_quotes/:source/:destination_amount/:destination_currency
 
 </pre>
 
@@ -127,7 +127,7 @@ account issue the following call to get a quote for a Ripple payment.</p>
           "expiration": "2014-09-23T20:20:20.000Z"
         },
         "destination": {
-            "uri": "acct:Jose+Valim+3883309488458438+Santander@bitso.com",
+            "uri": "",
             "claims_required": [],
             "claims_jwts": [],
             "additional_info": {}
@@ -174,6 +174,17 @@ You can check the status of a bridge payment by making a get request with the in
       "state": "paid"
     }
 </pre>
+<p>5. Requesting receiver bank details<p>
+
+<p>
+The bank details of the receiving party may be obtained with the following call:
+</p>
+
+<pre>
+    GET /api/users/bank/:id
+</pre>
+
+<p>The supplied ID is the user ID of the receiver and may be found in the memo field of the ripple transaction.
        </div>
         <div class="col-md-2">
         </div>
