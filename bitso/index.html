@@ -70,38 +70,8 @@
           <p>Send payments of Mexican Peso (MXN) to any bank account in Mexico</p>
 
 <h2>Usage</h2>
-  
-<p>1. Before sending MXN to a Mexican bank account you must verify with Bitso that they can deliver funds to that account</p>
 
-<pre>
-
-    GET https://bitso.com/.well-known/webfinger?resource=acct:(GivenName)+(FamilyName)+(CLAVE)+(BankName)@bitso.com
-
-</pre>
-
-<p>The above call will return whether not not one can make a payment to the given bank account.</p>
-
-<pre>
-
-  {
-    "aliases": [
-        "ripple:rBWay8KRdmroZra4DTXi6h5cLtPhs5mH7v?dt=7383",
-    ],
-    "links": [
-      {
-        "rel": "https://gatewayd.org/gateway-services/bridge_quotes",
-        "href": "https://bitso.com/ripple/bridge_quotes",
-      },
-      {
-        "rel": "https://gatewayd.org/gateway-services/bridge_payment_status",
-        "href": "https://bitso.com/ripple/payment_status",
-      }
-    ]
-  }
-
-</pre>
-
-<p>2. To determine whether a payment can be made to a Mexican bank account through Bitso from a specific Ripple
+<p>1. To determine whether a payment can be made to a Mexican bank account through Bitso from a specific Ripple
 account issue the following call to get a quote for a Ripple payment.</p>
 
 <pre>
@@ -123,14 +93,19 @@ account issue the following call to get a quote for a Ripple payment.</p>
             "currency": "USD",
             "issuer": ""
           },
-          "invoice_id": "7c220bd60487236f8ec82cd572eae0c9b79cb5178c0cba8f488c981183422908",
+          "invoice_id": "",
           "expiration": "2014-09-23T20:20:20.000Z"
         },
         "destination": {
-            "uri": "acct:Jose+Valim+3883309488458438+Santander@bitso.com",
+            "uri": "",
             "claims_required": [],
             "claims_jwts": [],
-            "additional_info": {}
+            "additional_info": {
+                "given_name": "",
+                "family_name": "",
+                "CLABE": "",
+                "bank_name": ""
+            }
         },
         "destination_amount": {
             "amount": "25.78",
@@ -147,9 +122,56 @@ account issue the following call to get a quote for a Ripple payment.</p>
 </pre>
 </code>
 
-<p>3. Sender sends the Ripple payment using the destination tag and invoice id specified</p>
+<p>The returned quote shall contain an "additional_info" object.  The additional info object will contain any number of blank tags. 
+These tags must be filled in by ripple before the quote is posted back to Bitso.  Once the tags have been filled in, the quote will 
+be posted back to Bitso using the URL given above.  Bitso will add an invoice ID and respond with the quote.  The inclusion of the 
+invoice ID in the quote resposne indicates that Bitso has confirmed the receiver details and is ready to accept the ripple transaction.</p>
 
-<p>4. Checking payment status<p>
+<code>
+<pre>
+
+    {
+      bridge_quotes: [{
+        wallet_payment: {
+          "destination": "ripple:rHpR6ixWbMyGoDWskMJGD6rEg7Qq1oriDh?dt=7383"
+          "source"     : "ripple:r4EwBWxrx5HxYRyisfGzMto3AT8FZiYdWk"
+          "primary_amount": {
+            "amount": "5.125",
+            "currency": "USD",
+            "issuer": ""
+          },
+          "invoice_id": "7c220bd60487236f8ec82cd572eae0c9b79cb5178c0cba8f488c981183422908",
+          "expiration": "2014-09-23T20:20:20.000Z"
+        },
+        "destination": {
+            "uri": "",
+            "claims_required": [],
+            "claims_jwts": [],
+            "additional_info": {
+                "given_name": "Given Name",
+                "family_name": "Surname",
+                "CLABE": "CLABE",
+                "bank_name": "Bank"
+            }
+        },
+        "destination_amount": {
+            "amount": "25.78",
+            "currency": "MXN"
+        },
+        "parties": {
+           "inbound_bridge": ""
+           "outbound_bridge": "https://bitso.com",
+           "sending_agent": "",
+           "receiving_agent": ""
+        }
+      }]
+    }
+</pre>
+</code>
+
+<p>2. Sender sends the Ripple payment using the destination tag and invoice id specified</p>
+
+<p>3. Checking payment status<p>
 
 <p>
 You can check the status of a bridge payment by making a get request with the invoice id:
@@ -159,7 +181,7 @@ You can check the status of a bridge payment by making a get request with the in
     GET https://bitso.com/ripple/bridge_payment_status/7c220bd60487236f8ec82cd572eae0c9b79cb5178c0cba8f488c981183422908
 </pre>
 
-<p>Three possible states exist for a bridge payment: "unpaid", "paid", "completed"
+<p>Three possible states exist for a bridge payment: "unpaid", "paid", "completed"</p>
 
 <ul>
   <li>unpaid    - ripple payment has not yet been sent</li>
@@ -174,6 +196,7 @@ You can check the status of a bridge payment by making a get request with the in
       "state": "paid"
     }
 </pre>
+
        </div>
         <div class="col-md-2">
         </div>
