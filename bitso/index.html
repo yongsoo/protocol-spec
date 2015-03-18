@@ -103,7 +103,7 @@ account issue the following call to get a quote for a Ripple payment.</p>
             "additional_info": {
                 "given_name": "",
                 "family_name": "",
-                "CLABE": "",
+                "bank_identifier": "",
                 "bank_name": ""
             }
         },
@@ -122,10 +122,11 @@ account issue the following call to get a quote for a Ripple payment.</p>
 </pre>
 </code>
 
-<p>The returned quote shall contain an "additional_info" object.  The additional info object will contain any number of blank tags. 
+ <p>The returned quote shall contain an "additional_info" object.  The additional info object will contain the following blank tags:
+"given_name", "family_name", "bank_identifier", "bank_name".
 These tags must be filled in by ripple before the quote is posted back to Bitso.  Once the tags have been filled in, the quote will 
-be posted back to Bitso using the URL given above.  Bitso will add an invoice ID and respond with the quote.  The inclusion of the 
-invoice ID in the quote resposne indicates that Bitso has confirmed the receiver details and is ready to accept the ripple transaction.</p>
+be posted back to Bitso using the URL given above.  Bitso will add an invoice id and respond with the quote.  The inclusion of the 
+invoice id in the quote resposne indicates that Bitso has confirmed the receiver details and is ready to accept the ripple transaction.</p>
 
 <code>
 <pre>
@@ -150,7 +151,7 @@ invoice ID in the quote resposne indicates that Bitso has confirmed the receiver
             "additional_info": {
                 "given_name": "Given Name",
                 "family_name": "Surname",
-                "CLABE": "CLABE",
+                "bank_identifier": "CLABE",
                 "bank_name": "Bank"
             }
         },
@@ -169,7 +170,8 @@ invoice ID in the quote resposne indicates that Bitso has confirmed the receiver
 </pre>
 </code>
 
-<p>2. Sender sends the Ripple payment using the destination tag and invoice id specified</p>
+<p>2. Sender sends the Ripple payment using the destination tag and invoice id specified.  The invoice id may be used to map the
+ripple transaction the original quote, which contains the receiver's bank information.</p>
 
 <p>3. Checking payment status<p>
 
